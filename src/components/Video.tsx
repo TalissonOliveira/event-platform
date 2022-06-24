@@ -1,16 +1,63 @@
+import { gql, useQuery } from '@apollo/client'
 import { DefaultUi, Player, Youtube } from '@vime/react'
 import { CaretRight, DiscordLogo, FileArrowDown, Lightning } from 'phosphor-react'
 import { Button } from './Button'
 
 import '@vime/core/themes/default.css'
 
-export function Video() {
+const GET_LESSON_BY_SLUG_QUERY = gql`
+  query GetLessonBySlug ($slug: String) {
+    lesson(where: {slug: $slug}) {
+      title
+      videoId
+      description
+      teacher {
+        name
+        bio
+        avatarURL
+      }
+    }
+  }
+`
+
+interface GetLessonBySlugResponse {
+  lesson: {
+    title: string
+    videoId: string
+    description: string
+    teacher: {
+      name: string
+      bio: string
+      avatarURL: string
+    }
+  }
+}
+
+interface VideoProps {
+  lessonSlug: string
+}
+
+export function Video({ lessonSlug }: VideoProps) {
+  const { data } = useQuery<GetLessonBySlugResponse>(GET_LESSON_BY_SLUG_QUERY, {
+    variables: {
+      slug: lessonSlug
+    }
+  })
+
+  if (!data) {
+    return (
+      <div className="flex-1">
+        <p>Carregando...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="flex-1">
       <div className="bg-black flex justify-center">
         <div className="w-full h-full max-w-[1100px] max-h-[60vh] aspect-video">
           <Player>
-            <Youtube videoId={'SO4-izct7Mc'} />
+            <Youtube videoId={data.lesson.videoId} />
             <DefaultUi />
           </Player>
         </div>
@@ -20,25 +67,25 @@ export function Video() {
         <div className="flex items-start gap-16">
           <div className="flex-1">
             <h1 className="text-2xl font-bold">
-              Abertura do evento Ignite Lab
+              {data.lesson.title}
             </h1>
             <p className="text-gray-200 leading-relaxed mt-4">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eligendi autem sunt neque distinctio itaque eos natus ipsa architecto in, blanditiis iure? Fugiat nemo consectetur odio voluptate iusto at repellat corrupti?
+              {data.lesson.description}
             </p>
 
             <div className="flex items-center gap-4 mt-6">
               <img
                 className="w-16 h-16 border-2 border-blue-500 rounded-full"
-                src="https://github.com/talissonoliveira.png"
-                alt=""
+                src={data.lesson.teacher.avatarURL}
+                alt={data.lesson.teacher.name}
               />
 
               <div className="leading-relaxed">
                 <strong className="text-2xl font-bold block">
-                  Talisson Oliveira
+                  {data.lesson.teacher.name}
                 </strong>
                 <span className="text-sm text-gray-200 block">
-                  Co-fundador e CTO na Rocketseat
+                  {data.lesson.teacher.bio}
                 </span>
               </div>
             </div>
