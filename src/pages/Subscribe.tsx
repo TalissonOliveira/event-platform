@@ -3,6 +3,9 @@ import { useCreateSubscriberMutation } from '../graphql/generated'
 import { useNavigate } from 'react-router-dom'
 import { Logo } from '../components/Logo'
 
+import reactIconImg from '../../src/assets/react-icon.svg'
+import codeMockupImg from '../../src/assets/code-mockup.png'
+
 export function Subscribe() {
   const [createSubscriber, { loading }] = useCreateSubscriberMutation()
   const [name, setName] = useState('')
@@ -26,7 +29,7 @@ export function Subscribe() {
     <div className="min-h-screen bg-blur bg-cover bg-no-repeat flex flex-col items-center">
       <img
         className="absolute top-[0.625rem] pointer-events-none"
-        src="/src/assets/react-icon.svg"
+        src={reactIconImg}
         alt=""
       />
       <div className="w-full max-w-[1183px] flex items-center justify-between mt-20 mx-auto">
@@ -67,7 +70,7 @@ export function Subscribe() {
         </div>
       </div>
 
-      <img src="/src/assets/code-mockup.png" alt="Code mockup"/>
+      <img src={codeMockupImg} alt="Code mockup"/>
     </div>
   )
 }
